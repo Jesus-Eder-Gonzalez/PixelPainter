@@ -1,4 +1,32 @@
+#pixelPainter {
+    height: fit-content;
+}
+div {
+    display: flex;
+    align-content: right;
+ 
+    /* max-width: 400px; */
+}
+
+#paletteDiv {
+    display: flex;
+    flex-direction: column;
+    /* align-self: center; */
+    justify-content: space-around;
+    align-items: center;
+    height: auto;
+    margin-left: 25px;
+    margin-bottom: 25px;
+    width: 175px;
+}
+
 table {
+    display: flex;
+    flex-flow: column nowrap;
     border: thin solid black;
     border-collapse: collapse;
 }
+
+
+
+

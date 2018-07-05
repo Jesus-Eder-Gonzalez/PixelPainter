@@ -62,6 +62,12 @@ function pixelPainter(width, height) {
   }
 
   function makeButtons() {
+    let currentColor = document.createElement('div');
+    currentColor.id = 'currentColor';
+    currentColor.style.border = 'thin solid black';
+    currentColor.style.padding = '10px';
+    currentColor.innerText = 'CURRENT';
+
     let erase = document.createElement('button');
     erase.innerText = 'ERASE';
     erase.addEventListener('click', function () {
@@ -87,6 +93,7 @@ function pixelPainter(width, height) {
       fill = true;
     });
 
+    paletteDiv.append(currentColor);
     paletteDiv.append(fillBut);
     paletteDiv.append(erase);
     paletteDiv.append(clear);
@@ -129,6 +136,7 @@ function pixelPainter(width, height) {
   }
 
   function setColor(element) {
+
     if (fill) {
       fillPixels(element);
       fill = false;
@@ -162,40 +170,35 @@ function pixelPainter(width, height) {
   }
 
   function findCells(tColor, currentPosition, tableArray) {
-    let tempArray = [];
-    let searchArray = [];
-    if (!(currentPosition - width < 1) && !(currentPosition - width > tableArray.length - 2)) {
-      let above = currentPosition - width;
-      tempArray.push(above);
-    }
-    if (!(currentPosition < 2) && !(currentPosition > tableArray.length - 2)) {
-      let current = currentPosition;
-      tempArray.push(current);
-    }
+    let above = currentPosition - width;
+    let current = currentPosition;
+    let below = currentPosition + width;
 
-    if (!currentPosition + width < 2 && !currentPosition + width > tableArray.length - 1) {
-      let below = currentPosition;
-      tempArray.push(below);
-    }
+
+    let tempArray = [above, current, below];
 
     if (tempArray) {
 
       for (let temp of tempArray) {
         for (let i = temp - 1; i < temp + 2; i++) {
 
-          if (tColor === tableArray[i].style.backgroundColor && tableArray[i].style.backgroundColor) {
-            tableArray[i].style.backgroundColor = color;
-            findCells(tColor, i, tableArray);
+          if ((i > -1) && (i < tableArray.length)) {
+
+            if (tColor === tableArray[i].style.backgroundColor && tableArray[i].style.backgroundColor) {
+              tableArray[i].style.backgroundColor = color;
+              if ((!(i % width === 0)) && (!(i % width === width - 1))) {
+                findCells(tColor, i, tableArray);
+              }
 
 
+            } else if (!tableArray[i].style.backgroundColor && tColor === 'white') {
+              tableArray[i].style.backgroundColor = color;
+              if ((!(i % width === 0))&&(!(i % width === width - 1))) {
+                findCells(tColor, i, tableArray);
+              }
+            }
 
-
-          } else if (!tableArray[i].style.backgroundColor && tColor === 'white') {
-            tableArray[i].style.backgroundColor = color;
-            findCells(tColor, i, tableArray);
-
-
-          }
+          } 
         }
       }
 
@@ -204,7 +207,16 @@ function pixelPainter(width, height) {
   }
 
   function getColor() {
+    let colorDiv = document.getElementById('currentColor');
     color = this.style.backgroundColor;
+    colorDiv.style.background = color;
+    colorDiv.style.color = oppositeColor(color);
+
+  }
+
+  function oppositeColor(colorToChange) {
+    let colors = colorToChange.substring(4, colorToChange.length - 1).split(',');
+    return 'rgb(' + (255 - colors[0]) + ',' + (255 - colors[1]) + ',' + (255 - colors[2]) + ')';
   }
 }
 

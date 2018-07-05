@@ -1,10 +1,17 @@
 #pixelPainter {
     height: fit-content;
 }
+
+#currentColor {
+    color: black;
+    border: 'thin solid black';
+    
+}
+
 div {
     display: flex;
     align-content: right;
- 
+
     /* max-width: 400px; */
 }
 

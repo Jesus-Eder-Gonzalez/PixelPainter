@@ -64,18 +64,18 @@ function pixelPainter(width, height) {
   function makeButtons() {
     let erase = document.createElement('button');
     erase.innerText = 'ERASE';
-    erase.addEventListener('click',function(){
-      color='white'
+    erase.addEventListener('click', function () {
+      color = 'white'
     });
-  
+
     let clear = document.createElement('button');
     clear.innerText = 'CLEAR';
-    clear.addEventListener('click',function(){
-  
+    clear.addEventListener('click', function () {
+
       let clearCells = table.getElementsByTagName('td');
-  
-      for(let i = 0; i < clearCells.length; i++){
-        if(clearCells[i].style.backgroundColor !== 'white'){
+
+      for (let i = 0; i < clearCells.length; i++) {
+        if (clearCells[i].style.backgroundColor !== 'white') {
           clearCells[i].style.backgroundColor = 'white';
         }
       }
@@ -83,7 +83,7 @@ function pixelPainter(width, height) {
 
     let fillBut = document.createElement('button');
     fillBut.innerText = 'FILL';
-    fillBut.addEventListener('click',function(){
+    fillBut.addEventListener('click', function () {
       fill = true;
     });
 
@@ -106,7 +106,7 @@ function pixelPainter(width, height) {
       if (e.type === 'mousedown') {
         mousedown = true;
 
-        if (e.target.id == 'pixels') {
+        if (e.target.id == 'pixels' && !fill) {
           setColor(e);
         }
 
@@ -121,7 +121,7 @@ function pixelPainter(width, height) {
   }
 
   function eventColor(event) {
-    if(!fill){
+    if (!fill) {
       if (mousedown) {
         setColor(event);
       }
@@ -129,15 +129,77 @@ function pixelPainter(width, height) {
   }
 
   function setColor(element) {
-    if(fill){
-      console.log(fill);
-      // fill = false;
-    }else {
-      if(element.target){
+    if (fill) {
+      fillPixels(element);
+      fill = false;
+    } else {
+      if (element.target) {
         element.target.style.backgroundColor = color;
       }
     }
-    
+
+
+  }
+
+  function fillPixels(element) {
+    let targetColor;
+
+    if (element.target.style.backgroundColor) {
+      targetColor = element.target.style.backgroundColor;
+    } else {
+      targetColor = 'white';
+    }
+
+    let fillCells = table.getElementsByTagName('td');
+
+    for (let i = 0; i < fillCells.length; i++) {
+      if (element.target === fillCells[i]) {
+        findCells(targetColor, i, fillCells);
+      }
+    }
+
+
+  }
+
+  function findCells(tColor, currentPosition, tableArray) {
+    let tempArray = [];
+    let searchArray = [];
+    if (!(currentPosition - width < 1) && !(currentPosition - width > tableArray.length - 2)) {
+      let above = currentPosition - width;
+      tempArray.push(above);
+    }
+    if (!(currentPosition < 2) && !(currentPosition > tableArray.length - 2)) {
+      let current = currentPosition;
+      tempArray.push(current);
+    }
+
+    if (!currentPosition + width < 2 && !currentPosition + width > tableArray.length - 1) {
+      let below = currentPosition;
+      tempArray.push(below);
+    }
+
+    if (tempArray) {
+
+      for (let temp of tempArray) {
+        for (let i = temp - 1; i < temp + 2; i++) {
+
+          if (tColor === tableArray[i].style.backgroundColor && tableArray[i].style.backgroundColor) {
+            tableArray[i].style.backgroundColor = color;
+            findCells(tColor, i, tableArray);
+
+
+
+
+          } else if (!tableArray[i].style.backgroundColor && tColor === 'white') {
+            tableArray[i].style.backgroundColor = color;
+            findCells(tColor, i, tableArray);
+
+
+          }
+        }
+      }
+
+    }
 
   }
 

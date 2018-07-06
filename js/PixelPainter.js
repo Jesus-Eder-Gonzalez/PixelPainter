@@ -6,16 +6,16 @@ function pixelPainter(width, height) {
   let col = width;
   let mousedown = false;
   let fill = false;
-  let tableCellsArray;
+  let tableRowsArray;
 
   //function created DOM elements
-  let pixel = document.getElementById('pixelPainter');
-  let table = document.createElement('Table');
-  table.id = 'pixelCanvas';
-  let tableDiv = document.createElement('div');
-  tableDiv.id = 'tableDiv';
-  let paletteDiv = document.createElement('div');
-  paletteDiv.id = 'paletteDiv';
+  let pixelPaint = document.getElementById('pixelPainter');
+  let pixelCanvas = document.createElement('Table');
+  pixelCanvas.id = 'pixelCanvas';
+  let canvasContainer = document.createElement('div');
+  canvasContainer.id = 'tableContainer';
+  let paletteContainer = document.createElement('div');
+  paletteContainer.id = 'paletteContainer';
   let palette = document.createElement('Table');
 
   //call my event listeners
@@ -23,45 +23,54 @@ function pixelPainter(width, height) {
 
   //create and attach the palette
   makeTable(palette, 20, 6, 15, getColor, undefined, setColors);
-  paletteDiv.append(palette);
+  paletteContainer.append(palette);
 
   //calls the function that makes all the buttons in pixel painter
   makeButtons();
 
-
-
   //create and attach the pixels
-  makeTable(table, row, col, size, setColor, eventColor, undefined, 'pixels');
+  makeTable(pixelCanvas, row, col, size, setColor, eventColor, undefined, 'pixels');
 
-
-
-  pixel.append(paletteDiv);
-  tableDiv.append(table);
-  pixel.append(tableDiv);
-
-  tableCellsArray = table.getElementsByTagName('td');
+  pixelPaint.append(paletteContainer);
+  canvasContainer.append(pixelCanvas);
+  pixelPaint.append(canvasContainer);
 
   //function methods to create the tables, modify the background color, and event handlers
   function makeTable(tableToAppend, rows, cols, size, onclick, onhover, background, tdClass) {
+
+    //This double for loop creates the rows and then the columns in the table, it also assigns id, class, and other attributes
     for (let i = 0; i < rows; i++) {
+
       let tempRow = document.createElement('tr');
+      tempRow.id = i;
+
       for (let j = 0; j < cols; j++) {
+
         let temp = document.createElement('td');
         temp.style.width = size;
         temp.style.height = size;
         temp.style.border = 'thin solid black';
+        temp.id = j;
+
+        //Optional parameters
         if (tdClass) {
-          temp.setAttribute('id', tdClass);
+          temp.setAttribute('class', tdClass);
         }
+
         if (onclick) {
           temp.addEventListener('click', onclick);
+        }
+
+        if (onhover) {
           temp.addEventListener('mouseover', onhover);
         }
+
         if (background) {
           temp.style.backgroundColor = background();
         } else {
           temp.style.backgroundColor = 'white';
         }
+
         tempRow.append(temp);
       }
       tableToAppend.appendChild(tempRow);
@@ -81,12 +90,15 @@ function pixelPainter(width, height) {
     erase.addEventListener('click', function () {
       color = 'white'
     });
+    erase.addEventListener('dblclick', function () {
+      color = 'transparent'
+    });
 
     let clear = document.createElement('button');
     clear.innerText = 'CLEAR';
     clear.addEventListener('click', function () {
 
-      let clearCells = table.getElementsByTagName('td');
+      let clearCells = pixelCanvas.getElementsByTagName('td');
 
       for (let i = 0; i < clearCells.length; i++) {
         if (clearCells[i].style.backgroundColor !== 'white') {
@@ -101,27 +113,30 @@ function pixelPainter(width, height) {
       fill = true;
     });
 
-    paletteDiv.append(currentColor);
-    paletteDiv.append(fillBut);
-    paletteDiv.append(erase);
-    paletteDiv.append(clear);
+    paletteContainer.append(currentColor);
+    paletteContainer.append(fillBut);
+    paletteContainer.append(erase);
+    paletteContainer.append(clear);
   }
 
   function setColors() {
+
     let red = parseInt(Math.random() * 255);
     let green = parseInt(Math.random() * 255);
     let blue = parseInt(Math.random() * 255);
-    const color = red.toString(16) + green.toString(16) + blue.toString(16);
-    return color;
+
+    return 'rgb(' + red + ',' + green + ',' + blue + ')';
+
   }
 
   function eventHandlers() {
 
     document.addEventListener('mousedown', e => {
+
       if (e.type === 'mousedown') {
         mousedown = true;
 
-        if (e.target.id == 'pixels' && !fill) {
+        if (e.target.className === 'pixels' && !fill) {
           setColor(e);
         }
 
@@ -136,37 +151,32 @@ function pixelPainter(width, height) {
   }
 
   function eventColor(event) {
-    if (!fill) {
-      if (mousedown) {
-        setColor(event);
-      }
+    if (!fill && mousedown) {
+      setColor(event);
     }
   }
 
   function setColor(element) {
 
     if (fill) {
+
       fillPixels(element);
       fill = false;
-    } else {
-      if (element.target) {
-        element.target.style.backgroundColor = color;
-      }
+
+    } else if (element.target) {
+
+      element.target.style.backgroundColor = color;
+
     }
 
 
   }
 
   function fillPixels(element) {
-    let targetColor;
 
-    if (element.target.style.backgroundColor) {
-      targetColor = element.target.style.backgroundColor;
-    } else {
-      targetColor = 'white';
-    }
+    let targetColor = element.target.style.backgroundColor;
 
-    let fillCells = table.getElementsByTagName('td');
+    let fillCells = pixelCanvas.getElementsByTagName('td');
 
     for (let i = 0; i < fillCells.length; i++) {
       if (element.target === fillCells[i]) {
@@ -177,33 +187,31 @@ function pixelPainter(width, height) {
 
   }
 
-  function findCells(tColor, currentPosition, tableArray) {
+  function findCells(targetBackgroundColor, currentPosition, tableArray) {
     let above = currentPosition - width;
     let current = currentPosition;
     let below = currentPosition + width;
+    let edgeCaseStart = -1;
+    let edgeCaseEnd = 2;
 
+    if (currentPosition%width === 0){
+      edgeCaseStart++;
+    } else if(currentPosition%width === width-1) {
+      edgeCaseEnd--;
+    }
 
     let tempArray = [above, current, below];
 
     for (let temp of tempArray) {
-      for (let i = temp - 1; i < temp + 2; i++) {
+      for (let i = temp + edgeCaseStart; i < temp + edgeCaseEnd; i++) {
 
 
-        if ((i > -1) && (i < tableArray.length)) {
-
-          if (tColor === tableArray[i].style.backgroundColor && tableArray[i].style.backgroundColor) {
-            tableArray[i].style.backgroundColor = color;
-            if ((!(i % width === 0)) && (!(i % width === width - 1))) {
-              findCells(tColor, i, tableArray);
-            }
-
-
-          } else if (!tableArray[i].style.backgroundColor && tColor === 'white') {
-            tableArray[i].style.backgroundColor = color;
-            if ((!(i % width === 0)) && (!(i % width === width - 1))) {
-              findCells(tColor, i, tableArray);
-            }
-          }
+        if ((i > -1)
+          && (i < tableArray.length)
+          && (targetBackgroundColor === tableArray[i].style.backgroundColor)) {
+            
+          tableArray[i].style.backgroundColor = color;
+          findCells(targetBackgroundColor, i, tableArray);
 
         }
       }

@@ -9,20 +9,11 @@ function pixelPainter(width, height) {
   let tableRowsArray;
 
   //function created DOM elements
-<<<<<<< HEAD
-  let pixel = document.getElementById('pixelPainter');
-  let table = document.createElement('Table');
-  table.id = 'pixelCanvas';
-
-  let tableContainer = document.createElement('div');
-  tableContainer.id = 'tableContainer';
-=======
   let pixelPaint = document.getElementById('pixelPainter');
   let pixelCanvas = document.createElement('Table');
   pixelCanvas.id = 'pixelCanvas';
   let canvasContainer = document.createElement('div');
   canvasContainer.id = 'tableContainer';
->>>>>>> develop
   let paletteContainer = document.createElement('div');
   paletteContainer.id = 'paletteContainer';
   let palette = document.createElement('Table');
@@ -31,27 +22,14 @@ function pixelPainter(width, height) {
   eventHandlers();
 
   //create and attach the palette
-<<<<<<< HEAD
   makeTable(palette, 20, 12, 15, getColor, undefined, colorShades);
-=======
-  makeTable(palette, 20, 6, 15, getColor, undefined, colorShades);
->>>>>>> develop
   paletteContainer.append(palette);
 
   //calls the function that makes all the buttons in pixel painter
   makeButtons();
 
   //create and attach the pixels
-<<<<<<< HEAD
-  makeTable(table, row, col, size, setColor, eventColor, undefined, 'pixels');
-
-
-  pixel.append(paletteContainer);
-  tableContainer.append(table);
-  pixel.append(tableContainer);
-=======
   makeTable(pixelCanvas, row, col, size, setColor, eventColor, undefined, 'pixels');
->>>>>>> develop
 
   pixelPaint.append(paletteContainer);
   canvasContainer.append(pixelCanvas);
@@ -155,7 +133,6 @@ function pixelPainter(width, height) {
     let red = parseInt(Math.random() * 255);
     let green = parseInt(Math.random() * 255);
     let blue = parseInt(Math.random() * 255);
-<<<<<<< HEAD
     // const color = red.toString(16) + green.toString(16) + blue.toString(16);
     return [red,green,blue];
   }
@@ -166,11 +143,6 @@ function pixelPainter(width, height) {
     const saturation = parseInt(Math.random()*40)+60;
     let light = parseInt(Math.random()*50)+25;
     return 'hsl(' + hue+','+saturation+'%,'+light+'%)';
-=======
-
-    return 'rgb(' + red + ',' + green + ',' + blue + ')';
-
->>>>>>> develop
   }
   // function colorShades(color) {
   //   // console.log(color);

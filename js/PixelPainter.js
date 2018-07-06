@@ -119,8 +119,8 @@ function pixelPainter(width, height) {
   function colorShades(color){
     let colorShade;
     let hue =  parseInt(Math.random()*360);
-    const saturation = parseInt(Math.random()*10)+90;
-    let light = parseInt(Math.random()*40)+25;
+    const saturation = parseInt(Math.random()*40)+60;
+    let light = parseInt(Math.random()*50)+25;
     return 'hsl(' + hue+','+saturation+'%,'+light+'%)';
   }
   // function colorShades(color) {
@@ -130,7 +130,7 @@ function pixelPainter(width, height) {
   //   // console.log(gradient);
   //   switch (color) {
   //     case 0:
-  //     colorShade = 'HelloWorld';
+  //     colorShade = 'transparent';
   //     break;
   //     case 1:
   //     colorShade = [255,0,0];

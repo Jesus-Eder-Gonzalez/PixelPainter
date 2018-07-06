@@ -1,6 +1,6 @@
 function pixelPainter(width, height) {
   //function variables
-  let color = 'white';
+  let color = colorShades();
   let size = 40;
   let row = height;
   let col = width;
@@ -22,7 +22,7 @@ function pixelPainter(width, height) {
   eventHandlers();
 
   //create and attach the palette
-  makeTable(palette, 20, 6, 15, getColor, undefined, setColors);
+  makeTable(palette, 20, 6, 15, getColor, undefined, colorShades);
   paletteContainer.append(palette);
 
   //calls the function that makes all the buttons in pixel painter
@@ -80,19 +80,27 @@ function pixelPainter(width, height) {
   function makeButtons() {
     let currentColor = document.createElement('div');
     currentColor.id = 'currentColor';
-    currentColor.style.border = 'thin solid black';
+    currentColor.style.border = 'thick solid white';
     currentColor.style.padding = '10px';
-    currentColor.innerText = 'CURRENT';
-    currentColor.style.background = 'white';
+    currentColor.innerHTML = color.toString();
+    currentColor.style.background = color;
 
     let erase = document.createElement('button');
     erase.innerText = 'ERASE';
     erase.addEventListener('click', function () {
       color = 'white'
+      currentColor.style.background = color;
+      currentColor.innerHTML = color.toString();
+      currentColor.style.color = oppositeColor(color);
+
     });
     erase.addEventListener('dblclick', function () {
       color = 'transparent'
+      currentColor.style.background = color;
+      currentColor.innerHTML = color.toString();
+      currentColor.style.color = 'black';
     });
+
 
     let clear = document.createElement('button');
     clear.innerText = 'CLEAR';
@@ -231,6 +239,43 @@ function pixelPainter(width, height) {
     let colors = colorToChange.substring(4, colorToChange.length - 1).split(',');
     return 'rgb(' + (255 - colors[0]) + ',' + (255 - colors[1]) + ',' + (255 - colors[2]) + ')';
   }
+
+  function colorShades(){
+    let hue =  parseInt(Math.random()*360);
+    const saturation = parseInt(Math.random()*40)+60;
+    let light = parseInt(Math.random()*50)+25;
+    return 'hsl(' + hue+','+saturation+'%,'+light+'%)';
+  }
+
+  // function colorShades(color) {
+  //   // console.log(color);
+  //   let colorShade;
+  //   // let gradient = parseInt((150/height))*step;
+  //   // console.log(gradient);
+  //   switch (color) {
+  //     case 0:
+  //     colorShade = 'transparent';
+  //     break;
+  //     case 1:
+  //     colorShade = [255,0,0];
+  //     break;
+  //     case 2:
+  //     colorShade = [255,128,0];
+  //     break;
+  //     case 3:
+  //     colorShade = [255,255,0];
+  //     break;
+  //     case 4:
+  //     colorShade = [128,255,0];
+  //     break;
+  //     default:
+  //     colorShade = setColors();
+  //     console.log(colorShade);
+  //     break;
+  //   }
+
+  //   return 'rgb(' + colorShade[0] + ',' + colorShade[1] + ',' + colorShade[2] + ')';
+  // }
 }
 
 pixelPainter(25, 20);

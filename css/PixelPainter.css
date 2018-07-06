@@ -32,11 +32,7 @@ div {
     flex-direction: column;
 
     background-image: url('../wood.jpg');
-<<<<<<< HEAD
     background-color: rgb(185,156,107);
-=======
-    background-color: chocolate;
->>>>>>> develop
     justify-content: space-around;
     align-items: center;
     height: auto;

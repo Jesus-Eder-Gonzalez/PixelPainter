@@ -12,18 +12,19 @@ function pixelPainter(width, height) {
   let pixel = document.getElementById('pixelPainter');
   let table = document.createElement('Table');
   table.id = 'pixelCanvas';
-  let tableDiv = document.createElement('div');
-  tableDiv.id = 'tableDiv';
-  let paletteDiv = document.createElement('div');
-  paletteDiv.id = 'paletteDiv';
+
+  let tableContainer = document.createElement('div');
+  tableContainer.id = 'tableContainer';
+  let paletteContainer = document.createElement('div');
+  paletteContainer.id = 'paletteContainer';
   let palette = document.createElement('Table');
 
   //call my event listeners
   eventHandlers();
 
   //create and attach the palette
-  makeTable(palette, 20, 6, 15, getColor, undefined, setColors);
-  paletteDiv.append(palette);
+  makeTable(palette, 20, 12, 15, getColor, undefined, colorShades);
+  paletteContainer.append(palette);
 
   //calls the function that makes all the buttons in pixel painter
   makeButtons();
@@ -34,12 +35,12 @@ function pixelPainter(width, height) {
   makeTable(table, row, col, size, setColor, eventColor, undefined, 'pixels');
 
 
-
-  pixel.append(paletteDiv);
-  tableDiv.append(table);
-  pixel.append(tableDiv);
+  pixel.append(paletteContainer);
+  tableContainer.append(table);
+  pixel.append(tableContainer);
 
   tableCellsArray = table.getElementsByTagName('td');
+
 
   //function methods to create the tables, modify the background color, and event handlers
   function makeTable(tableToAppend, rows, cols, size, onclick, onhover, background, tdClass) {
@@ -58,7 +59,7 @@ function pixelPainter(width, height) {
           temp.addEventListener('mouseover', onhover);
         }
         if (background) {
-          temp.style.backgroundColor = background();
+          temp.style.backgroundColor = background(i+j);
         } else {
           temp.style.backgroundColor = 'white';
         }
@@ -101,19 +102,56 @@ function pixelPainter(width, height) {
       fill = true;
     });
 
-    paletteDiv.append(currentColor);
-    paletteDiv.append(fillBut);
-    paletteDiv.append(erase);
-    paletteDiv.append(clear);
+    paletteContainer.append(currentColor);
+    paletteContainer.append(fillBut);
+    paletteContainer.append(erase);
+    paletteContainer.append(clear);
   }
 
   function setColors() {
     let red = parseInt(Math.random() * 255);
     let green = parseInt(Math.random() * 255);
     let blue = parseInt(Math.random() * 255);
-    const color = red.toString(16) + green.toString(16) + blue.toString(16);
-    return color;
+    // const color = red.toString(16) + green.toString(16) + blue.toString(16);
+    return [red,green,blue];
   }
+  
+  function colorShades(color){
+    let colorShade;
+    let hue =  parseInt(Math.random()*360);
+    const saturation = parseInt(Math.random()*10)+90;
+    let light = parseInt(Math.random()*40)+25;
+    return 'hsl(' + hue+','+saturation+'%,'+light+'%)';
+  }
+  // function colorShades(color) {
+  //   // console.log(color);
+  //   let colorShade;
+  //   // let gradient = parseInt((150/height))*step;
+  //   // console.log(gradient);
+  //   switch (color) {
+  //     case 0:
+  //     colorShade = 'HelloWorld';
+  //     break;
+  //     case 1:
+  //     colorShade = [255,0,0];
+  //     break;
+  //     case 2:
+  //     colorShade = [255,128,0];
+  //     break;
+  //     case 3:
+  //     colorShade = [255,255,0];
+  //     break;
+  //     case 4:
+  //     colorShade = [128,255,0];
+  //     break;
+  //     default:
+  //     colorShade = setColors();
+  //     console.log(colorShade);
+  //     break;
+  //   }
+
+  //   return 'rgb(' + colorShade[0] + ',' + colorShade[1] + ',' + colorShade[2] + ')';
+  // }
 
   function eventHandlers() {
 
@@ -212,10 +250,10 @@ function pixelPainter(width, height) {
   }
 
   function getColor() {
-    let colorDiv = document.getElementById('currentColor');
+    let colorStatusBox = document.getElementById('currentColor');
     color = this.style.backgroundColor;
-    colorDiv.style.background = color;
-    colorDiv.style.color = oppositeColor(color);
+    colorStatusBox.style.background = color;
+    colorStatusBox.style.color = oppositeColor(color);
 
   }
 

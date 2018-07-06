@@ -16,7 +16,7 @@ h1 {
 }
 
 body {
-    background-image: url('/background.png');
+    background-image: url('background.png');
     background-color: aquamarine;
 }
 
@@ -27,12 +27,12 @@ div {
     /* max-width: 400px; */
 }
 
-#paletteDiv {
+#paletteContainer {
     display: flex;
     flex-direction: column;
 
-    background-image: url('/wood.jpg');
-    background-color: chocolate;
+    background-image: url('wood.jpg');
+    background-color: rgb(185,156,107);
     justify-content: space-around;
     align-items: center;
     height: auto;

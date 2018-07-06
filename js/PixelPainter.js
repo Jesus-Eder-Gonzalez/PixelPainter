@@ -1,11 +1,12 @@
 function pixelPainter(width, height) {
   //function variables
-  let color = 0;
+  let color = 'white';
   let size = 40;
   let row = height;
   let col = width;
   let mousedown = false;
   let fill = false;
+  let tableCellsArray;
 
   //function created DOM elements
   let pixel = document.getElementById('pixelPainter');
@@ -32,9 +33,13 @@ function pixelPainter(width, height) {
   //create and attach the pixels
   makeTable(table, row, col, size, setColor, eventColor, undefined, 'pixels');
 
+
+
   pixel.append(paletteDiv);
   tableDiv.append(table);
   pixel.append(tableDiv);
+
+  tableCellsArray = table.getElementsByTagName('td');
 
   //function methods to create the tables, modify the background color, and event handlers
   function makeTable(tableToAppend, rows, cols, size, onclick, onhover, background, tdClass) {
@@ -54,6 +59,8 @@ function pixelPainter(width, height) {
         }
         if (background) {
           temp.style.backgroundColor = background();
+        } else {
+          temp.style.backgroundColor = 'white';
         }
         tempRow.append(temp);
       }
@@ -67,6 +74,7 @@ function pixelPainter(width, height) {
     currentColor.style.border = 'thin solid black';
     currentColor.style.padding = '10px';
     currentColor.innerText = 'CURRENT';
+    currentColor.style.background = 'white';
 
     let erase = document.createElement('button');
     erase.innerText = 'ERASE';
@@ -177,31 +185,28 @@ function pixelPainter(width, height) {
 
     let tempArray = [above, current, below];
 
-    if (tempArray) {
-
-      for (let temp of tempArray) {
-        for (let i = temp - 1; i < temp + 2; i++) {
-
-          if ((i > -1) && (i < tableArray.length)) {
-
-            if (tColor === tableArray[i].style.backgroundColor && tableArray[i].style.backgroundColor) {
-              tableArray[i].style.backgroundColor = color;
-              if ((!(i % width === 0)) && (!(i % width === width - 1))) {
-                findCells(tColor, i, tableArray);
-              }
+    for (let temp of tempArray) {
+      for (let i = temp - 1; i < temp + 2; i++) {
 
 
-            } else if (!tableArray[i].style.backgroundColor && tColor === 'white') {
-              tableArray[i].style.backgroundColor = color;
-              if ((!(i % width === 0))&&(!(i % width === width - 1))) {
-                findCells(tColor, i, tableArray);
-              }
+        if ((i > -1) && (i < tableArray.length)) {
+
+          if (tColor === tableArray[i].style.backgroundColor && tableArray[i].style.backgroundColor) {
+            tableArray[i].style.backgroundColor = color;
+            if ((!(i % width === 0)) && (!(i % width === width - 1))) {
+              findCells(tColor, i, tableArray);
             }
 
-          } 
+
+          } else if (!tableArray[i].style.backgroundColor && tColor === 'white') {
+            tableArray[i].style.backgroundColor = color;
+            if ((!(i % width === 0)) && (!(i % width === width - 1))) {
+              findCells(tColor, i, tableArray);
+            }
+          }
+
         }
       }
-
     }
 
   }

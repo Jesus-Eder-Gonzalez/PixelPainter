@@ -1,11 +1,23 @@
 #pixelPainter {
     height: fit-content;
+
 }
 
 #currentColor {
     color: black;
     border: 'thin solid black';
     
+}
+
+h1 {
+    color:white;
+    align-content: center;
+    /* text-align: center; */
+}
+
+body {
+    background-image: url('/background.png');
+    background-color: aquamarine;
 }
 
 div {
@@ -18,12 +30,15 @@ div {
 #paletteDiv {
     display: flex;
     flex-direction: column;
-    /* align-self: center; */
+
+    background-image: url('/wood.jpg');
+    background-color: chocolate;
     justify-content: space-around;
     align-items: center;
     height: auto;
+    margin-top:2px;
+    margin-bottom: 2px;
     margin-left: 25px;
-    margin-bottom: 25px;
     width: 175px;
 }
 

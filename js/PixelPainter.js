@@ -28,6 +28,7 @@ function pixelPainter(width, height) {
 
   let pointerdown = false;
   let fill = false;
+  let touching = false;
   let savedArray = new Array();
   let pixelElementArray;
 
@@ -103,314 +104,336 @@ function pixelPainter(width, height) {
         }
 
         if (onhover) {
-          temp.addEventListener('pointerenter', onhover);
+          temp.addEventListener('pointerover', onhover);
+          temp.addEventListener('touchstart', function () {
+            touching = true;
+            
+          }); 
+          document.addEventListener('touchmove', onhover);
+          temp.addEventListener('touchend', function () {
+            touching = false;
+          });
         }
 
-        if (background) {
-          temp.style.backgroundColor = background(i + j);
-        } else {
-          temp.style.backgroundColor = 'white';
-        }
+          if (background) {
+            temp.style.backgroundColor = background(i + j);
+          } else {
+            temp.style.backgroundColor = 'white';
+          }
 
-        tempRow.append(temp);
+          tempRow.append(temp);
+        }
+        tableToAppend.appendChild(tempRow);
       }
-      tableToAppend.appendChild(tempRow);
+    
+  }
+
+    function makeButtons() {
+      let currentColor = document.createElement('div');
+      currentColor.id = 'currentColor';
+      currentColor.style.border = 'thick solid white';
+      currentColor.style.padding = '10px';
+
+      currentColor.style.background = color;
+
+      let erase = document.createElement('button');
+      erase.innerText = 'ERASE';
+      erase.addEventListener('click', function () {
+
+        color = 'white'
+        currentColor.style.background = color;
+
+        currentColor.style.color = oppositeColor(color);
+
+      });
+      erase.addEventListener('dblclick', function () {
+        color = 'transparent'
+        currentColor.style.background = color;
+
+        currentColor.style.color = 'black';
+      });
+
+
+      let clear = document.createElement('button');
+      clear.innerText = 'CLEAR';
+      clear.addEventListener('click', function () {
+
+        for (let i = 0; i < pixelElementArray.length; i++) {
+
+          if (pixelElementArray[i].style.backgroundColor !== 'white') {
+
+            pixelElementArray[i].style.backgroundColor = 'white';
+
+          }
+        }
+      });
+
+      let fillBut = document.createElement('button');
+      fillBut.innerText = 'FILL';
+      fillBut.addEventListener('click', function () {
+        fill = true;
+      });
+
+      let save = document.createElement('button');
+      save.innerText = 'SAVE';
+      save.addEventListener('click', function () {
+
+        for (let i = 0; i < pixelElementArray.length; i++) {
+
+          savedArray[i] = pixelElementArray[i].style.backgroundColor;
+
+        }
+        saveState.setItem('saveState', JSON.stringify(savedArray));
+      });
+
+      let load = document.createElement('button');
+      load.innerText = 'LOAD';
+      load.addEventListener('click', function () {
+
+        if ((!(savedArray === [])) && !saveState.getItem('saveState')) {
+
+          alert('Unable to Load: No save found.');
+
+        } else if ((!(savedArray === [])) && saveState.getItem('saveState')) {
+          savedArray = JSON.parse(saveState.getItem('saveState'));
+
+        }
+
+        for (let i = 0; i < pixelElementArray.length; i++) {
+
+          if (savedArray) {
+
+            pixelElementArray[i].style.backgroundColor = savedArray[i];
+
+          }
+
+        }
+
+
+      });
+
+      paletteContainer.append(currentColor);
+      paletteContainer.append(fillBut);
+      paletteContainer.append(erase);
+      paletteContainer.append(clear);
+      paletteContainer.append(save);
+      paletteContainer.append(load);
     }
-  }
 
-  function makeButtons() {
-    let currentColor = document.createElement('div');
-    currentColor.id = 'currentColor';
-    currentColor.style.border = 'thick solid white';
-    currentColor.style.padding = '10px';
+    function setColors() {
 
-    currentColor.style.background = color;
+      let red = parseInt(Math.random() * 255);
+      let green = parseInt(Math.random() * 255);
+      let blue = parseInt(Math.random() * 255);
+      // const color = red.toString(16) + green.toString(16) + blue.toString(16);
+      return [red, green, blue];
+    }
 
-    let erase = document.createElement('button');
-    erase.innerText = 'ERASE';
-    erase.addEventListener('click', function () {
-
-      color = 'white'
-      currentColor.style.background = color;
-
-      currentColor.style.color = oppositeColor(color);
-
-    });
-    erase.addEventListener('dblclick', function () {
-      color = 'transparent'
-      currentColor.style.background = color;
-
-      currentColor.style.color = 'black';
-    });
-
-
-    let clear = document.createElement('button');
-    clear.innerText = 'CLEAR';
-    clear.addEventListener('click', function () {
-
-      for (let i = 0; i < pixelElementArray.length; i++) {
-
-        if (pixelElementArray[i].style.backgroundColor !== 'white') {
-
-          pixelElementArray[i].style.backgroundColor = 'white';
-
-        }
-      }
-    });
-
-    let fillBut = document.createElement('button');
-    fillBut.innerText = 'FILL';
-    fillBut.addEventListener('click', function () {
-      fill = true;
-    });
-
-    let save = document.createElement('button');
-    save.innerText = 'SAVE';
-    save.addEventListener('click', function () {
-
-      for (let i = 0; i < pixelElementArray.length; i++) {
-
-        savedArray[i] = pixelElementArray[i].style.backgroundColor;
-
-      }
-      saveState.setItem('saveState', JSON.stringify(savedArray));
-    });
-
-    let load = document.createElement('button');
-    load.innerText = 'LOAD';
-    load.addEventListener('click', function () {
-
-      if ((!(savedArray === [])) && !saveState.getItem('saveState')) {
-
-        alert('Unable to Load: No save found.');
-
-      } else if ((!(savedArray === [])) && saveState.getItem('saveState')) {
-        savedArray = JSON.parse(saveState.getItem('saveState'));
-
-      }
-
-      for (let i = 0; i < pixelElementArray.length; i++) {
-
-        if (savedArray) {
-
-          pixelElementArray[i].style.backgroundColor = savedArray[i];
-
-        }
-
-      }
-
-
-    });
-
-    paletteContainer.append(currentColor);
-    paletteContainer.append(fillBut);
-    paletteContainer.append(erase);
-    paletteContainer.append(clear);
-    paletteContainer.append(save);
-    paletteContainer.append(load);
-  }
-
-  function setColors() {
-
-    let red = parseInt(Math.random() * 255);
-    let green = parseInt(Math.random() * 255);
-    let blue = parseInt(Math.random() * 255);
-    // const color = red.toString(16) + green.toString(16) + blue.toString(16);
-    return [red, green, blue];
-  }
-
-  function colorShades(color) {
-    let colorShade;
-    let hue = parseInt(Math.random() * 360);
-    const saturation = parseInt(Math.random() * 40) + 60;
-    let light = parseInt(Math.random() * 50) + 25;
-    return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
-  }
-  // function colorShades(color) {
-  //   // console.log(color);
-  //   let colorShade;
-  //   // let gradient = parseInt((150/height))*step;
-  //   // console.log(gradient);
-  //   switch (color) {
-  //     case 0:
-  //     colorShade = 'transparent';
-  //     break;
-  //     case 1:
-  //     colorShade = [255,0,0];
-  //     break;
-  //     case 2:
-  //     colorShade = [255,128,0];
-  //     break;
-  //     case 3:
-  //     colorShade = [255,255,0];
-  //     break;
-  //     case 4:
-  //     colorShade = [128,255,0];
-  //     break;
-  //     default:
-  //     colorShade = setColors();
-  //     console.log(colorShade);
-  //     break;
-  //   }
-
-  //   return 'rgb(' + colorShade[0] + ',' + colorShade[1] + ',' + colorShade[2] + ')';
-  // }
-
-  function eventHandlers() {
-
-    // document.addEventListener('mousedown', e => {
-
-    //   if (e.type === 'mousedown') {
-    //     mousedown = true;
-
-    //     if (e.target.className === 'pixels' && !fill) {
-    //       setColor(e);
-    //     }
-
+    function colorShades(color) {
+      let colorShade;
+      let hue = parseInt(Math.random() * 360);
+      const saturation = parseInt(Math.random() * 40) + 60;
+      let light = parseInt(Math.random() * 50) + 25;
+      return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
+    }
+    // function colorShades(color) {
+    //   // console.log(color);
+    //   let colorShade;
+    //   // let gradient = parseInt((150/height))*step;
+    //   // console.log(gradient);
+    //   switch (color) {
+    //     case 0:
+    //     colorShade = 'transparent';
+    //     break;
+    //     case 1:
+    //     colorShade = [255,0,0];
+    //     break;
+    //     case 2:
+    //     colorShade = [255,128,0];
+    //     break;
+    //     case 3:
+    //     colorShade = [255,255,0];
+    //     break;
+    //     case 4:
+    //     colorShade = [128,255,0];
+    //     break;
+    //     default:
+    //     colorShade = setColors();
+    //     console.log(colorShade);
+    //     break;
     //   }
-    // }, false);
 
-    document.addEventListener('pointerdown', e => {
+    //   return 'rgb(' + colorShade[0] + ',' + colorShade[1] + ',' + colorShade[2] + ')';
+    // }
 
-      if (e.type === 'pointerdown') {
-        pointerdown = true;
+    function eventHandlers() {
 
-        if (e.target.className === 'pixels' && !fill) {
-          setColor(e);
-        }
+      // document.addEventListener('mousedown', e => {
 
-      }
-    }, false);
+      //   if (e.type === 'mousedown') {
+      //     mousedown = true;
 
-    document.addEventListener('pointerup', e => {
-      if (e.type === 'pointerup') {
-        pointerdown = false;
-      }
-    }, false);
-  }
+      //     if (e.target.className === 'pixels' && !fill) {
+      //       setColor(e);
+      //     }
 
-  function eventColor(event) {
-    if (!fill && pointerdown) {
-      setColor(event);
-    }
-  }
-
-  function setColor(element) {
-
-    if (fill) {
-
-      fillPixels(element);
-      fill = false;
-
-    } else if (element.target) {
-
-      element.target.style.backgroundColor = color;
-
-    }
+      //   }
+      // }, false);
 
 
-  }
 
-  function fillPixels(element) {
+      document.addEventListener('pointerdown', e => {
 
-    let targetColor = element.target.style.backgroundColor;
+        if (e.type === 'pointerdown') {
+          pointerdown = true;
 
-    let fillCells = pixelCanvas.getElementsByTagName('td');
-
-    for (let i = 0; i < fillCells.length; i++) {
-      if (element.target === fillCells[i]) {
-        findCells(targetColor, i, fillCells);
-      }
-    }
-
-
-  }
-
-  function findCells(targetBackgroundColor, currentPosition, tableArray) {
-    let above = currentPosition - width;
-    let current = currentPosition;
-    let below = currentPosition + width;
-    let edgeCaseStart = -1;
-    let edgeCaseEnd = 2;
-
-    if (currentPosition % width === 0) {
-      edgeCaseStart++;
-    } else if (currentPosition % width === width - 1) {
-      edgeCaseEnd--;
-    }
-
-    let tempArray = [above, current, below];
-
-    for (let temp of tempArray) {
-      for (let i = temp + edgeCaseStart; i < temp + edgeCaseEnd; i++) {
-
-
-        if ((i > -1)
-          && (i < tableArray.length)
-          && (targetBackgroundColor === tableArray[i].style.backgroundColor)) {
-
-          tableArray[i].style.backgroundColor = color;
-          findCells(targetBackgroundColor, i, tableArray);
+          if (e.target.className === 'pixels' && !fill) {
+            setColor(e);
+          }
 
         }
+      }, false);
+
+      document.addEventListener('pointerup', e => {
+        if (e.type === 'pointerup') {
+          pointerdown = false;
+        }
+      }, false);
+    }
+
+    function eventColor(event) {
+
+      if (!fill && (pointerdown || touching)) {
+
+        if(touching) {
+          console.log(event.target);
+          setColor(event.target);
+        } else {
+          setColor(event);
+        }
+
+
+
       }
     }
 
+    function setColor(element) {
+
+      if (fill) {
+
+        fillPixels(element);
+        fill = false;
+
+      } else if (element.target) {
+
+        element.target.style.backgroundColor = color;
+
+      }
+
+
+    }
+
+    function fillPixels(element) {
+
+      let targetColor = element.target.style.backgroundColor;
+
+      let fillCells = pixelCanvas.getElementsByTagName('td');
+
+      for (let i = 0; i < fillCells.length; i++) {
+        if (element.target === fillCells[i]) {
+          findCells(targetColor, i, fillCells);
+        }
+      }
+
+
+    }
+
+    function findCells(targetBackgroundColor, currentPosition, tableArray) {
+      let above = currentPosition - width;
+      let current = currentPosition;
+      let below = currentPosition + width;
+      let edgeCaseStart = -1;
+      let edgeCaseEnd = 2;
+
+      if (currentPosition % width === 0) {
+        edgeCaseStart++;
+      } else if (currentPosition % width === width - 1) {
+        edgeCaseEnd--;
+      }
+
+      let tempArray = [above, current, below];
+
+      for (let temp of tempArray) {
+        for (let i = temp + edgeCaseStart; i < temp + edgeCaseEnd; i++) {
+
+
+          if ((i > -1)
+            && (i < tableArray.length)
+            && (targetBackgroundColor === tableArray[i].style.backgroundColor)) {
+
+            tableArray[i].style.backgroundColor = color;
+            findCells(targetBackgroundColor, i, tableArray);
+
+          }
+        }
+      }
+
+    }
+
+    function getColor() {
+      let colorStatusBox = document.getElementById('currentColor');
+      color = this.style.backgroundColor;
+      colorStatusBox.style.background = color;
+      colorStatusBox.style.color = oppositeColor(color);
+
+    }
+
+    function oppositeColor(colorToChange) {
+      let colors = colorToChange.substring(4, colorToChange.length - 1).split(',');
+      return 'rgb(' + (255 - colors[0]) + ',' + (255 - colors[1]) + ',' + (255 - colors[2]) + ')';
+    }
+
+    function colorShades() {
+      let numberSign = Math.round(Math.random() * -1);
+      let hue = parseInt(Math.random() * 360);
+      const saturation = parseInt(numberSign * Math.random() * 25) + 75;
+      let light = parseInt(numberSign * Math.random() * 20) + 55;
+      return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
+    }
+
+    // document.addEventListener('touchstart', function (event) {
+    //   event.preventDefault();
+    // }, { passive: false });
+    // function colorShades(color) {
+    //   // console.log(color);
+    //   let colorShade;
+    //   // let gradient = parseInt((150/height))*step;
+    //   // console.log(gradient);
+    //   switch (color) {
+    //     case 0:
+    //     colorShade = 'transparent';
+    //     break;
+    //     case 1:
+    //     colorShade = [255,0,0];
+    //     break;
+    //     case 2:
+    //     colorShade = [255,128,0];
+    //     break;
+    //     case 3:
+    //     colorShade = [255,255,0];
+    //     break;
+    //     case 4:
+    //     colorShade = [128,255,0];
+    //     break;
+    //     default:
+    //     colorShade = setColors();
+    //     console.log(colorShade);
+    //     break;
+    //   }
+
+    //   return 'rgb(' + colorShade[0] + ',' + colorShade[1] + ',' + colorShade[2] + ')';
+    // }
   }
 
-  function getColor() {
-    let colorStatusBox = document.getElementById('currentColor');
-    color = this.style.backgroundColor;
-    colorStatusBox.style.background = color;
-    colorStatusBox.style.color = oppositeColor(color);
 
-  }
-
-  function oppositeColor(colorToChange) {
-    let colors = colorToChange.substring(4, colorToChange.length - 1).split(',');
-    return 'rgb(' + (255 - colors[0]) + ',' + (255 - colors[1]) + ',' + (255 - colors[2]) + ')';
-  }
-
-  function colorShades() {
-    let numberSign = Math.round(Math.random() * -1);
-    let hue = parseInt(Math.random() * 360);
-    const saturation = parseInt(numberSign * Math.random() * 25) + 75;
-    let light = parseInt(numberSign * Math.random() * 20) + 55;
-    return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
-  }
-
-  document.addEventListener('touchstart', function (event) {
-    event.preventDefault();
-  }, { passive: false });
-  // function colorShades(color) {
-  //   // console.log(color);
-  //   let colorShade;
-  //   // let gradient = parseInt((150/height))*step;
-  //   // console.log(gradient);
-  //   switch (color) {
-  //     case 0:
-  //     colorShade = 'transparent';
-  //     break;
-  //     case 1:
-  //     colorShade = [255,0,0];
-  //     break;
-  //     case 2:
-  //     colorShade = [255,128,0];
-  //     break;
-  //     case 3:
-  //     colorShade = [255,255,0];
-  //     break;
-  //     case 4:
-  //     colorShade = [128,255,0];
-  //     break;
-  //     default:
-  //     colorShade = setColors();
-  //     console.log(colorShade);
-  //     break;
-  //   }
-
-  //   return 'rgb(' + colorShade[0] + ',' + colorShade[1] + ',' + colorShade[2] + ')';
-  // }
-}
-
-pixelPainter(30, 30);
+  pixelPainter(30, 30);

@@ -1,12 +1,35 @@
 function pixelPainter(width, height) {
   //function variables
   let color = colorShades();
-  let size = 40;
+  // let size = 40;
+
   let row = height;
   let col = width;
-  let mousedown = false;
+  let ratioMin;
+  let clientRatio;
+  let saveState = window.localStorage;
+
+  if (window.innerHeight > window.innerWidth) {
+    ratioMin = window.innerWidth;
+  } else {
+    ratioMin = window.innerHeight;
+  }
+
+  if (document.documentElement.clientHeight > document.documentElement.clientWidth) {
+    clientRatio = document.documentElement.clientWidth;
+  } else {
+    clientRatio = document.documentElement.clientHeight;
+  }
+
+
+  console.log(document.documentElement.clientHeight + ' ' + document.documentElement.clientWidth);
+
+  let size = parseInt((clientRatio / (row * 1.5)));
+
+  let pointerdown = false;
   let fill = false;
-  let tableRowsArray;
+  let savedArray = new Array();
+  let pixelElementArray;
 
   //function created DOM elements
   let pixelPaint = document.getElementById('pixelPainter');
@@ -22,7 +45,27 @@ function pixelPainter(width, height) {
   eventHandlers();
 
   //create and attach the palette
+<<<<<<< HEAD
   makeTable(palette, 20, 12, 15, getColor, undefined, colorShades);
+=======
+  makeTable(palette, 20, 6, 15, getColor, undefined, colorShades);
+
+  let colorsArray = palette.getElementsByTagName('td');
+  let tempArray = [];
+
+  for (i = 0; i < colorsArray.length; i++) {
+    tempArray[i] = colorsArray[i].style.backgroundColor;
+  }
+
+  tempArray.sort((x, y) => {
+    return parseInt(y.match(/[0-9]+/gi)) - parseInt(x.match(/[0-9]+/gi));
+  });
+
+  for (i = 0; i < colorsArray.length; i++) {
+    colorsArray[i].style.backgroundColor = tempArray[i];
+  }
+
+>>>>>>> touch
   paletteContainer.append(palette);
 
   //calls the function that makes all the buttons in pixel painter
@@ -35,6 +78,10 @@ function pixelPainter(width, height) {
   canvasContainer.append(pixelCanvas);
   pixelPaint.append(canvasContainer);
 
+<<<<<<< HEAD
+=======
+  pixelElementArray = pixelCanvas.getElementsByTagName('td');
+>>>>>>> touch
 
   //function methods to create the tables, modify the background color, and event handlers
   function makeTable(tableToAppend, rows, cols, size, onclick, onhover, background, tdClass) {
@@ -63,7 +110,7 @@ function pixelPainter(width, height) {
         }
 
         if (onhover) {
-          temp.addEventListener('mouseover', onhover);
+          temp.addEventListener('pointerover', onhover);
         }
 
         if (background) {
@@ -83,22 +130,23 @@ function pixelPainter(width, height) {
     currentColor.id = 'currentColor';
     currentColor.style.border = 'thick solid white';
     currentColor.style.padding = '10px';
-    currentColor.innerHTML = color.toString();
+
     currentColor.style.background = color;
 
     let erase = document.createElement('button');
     erase.innerText = 'ERASE';
     erase.addEventListener('click', function () {
+
       color = 'white'
       currentColor.style.background = color;
-      currentColor.innerHTML = color.toString();
+
       currentColor.style.color = oppositeColor(color);
 
     });
     erase.addEventListener('dblclick', function () {
       color = 'transparent'
       currentColor.style.background = color;
-      currentColor.innerHTML = color.toString();
+
       currentColor.style.color = 'black';
     });
 
@@ -107,11 +155,12 @@ function pixelPainter(width, height) {
     clear.innerText = 'CLEAR';
     clear.addEventListener('click', function () {
 
-      let clearCells = pixelCanvas.getElementsByTagName('td');
+      for (let i = 0; i < pixelElementArray.length; i++) {
 
-      for (let i = 0; i < clearCells.length; i++) {
-        if (clearCells[i].style.backgroundColor !== 'white') {
-          clearCells[i].style.backgroundColor = 'white';
+        if (pixelElementArray[i].style.backgroundColor !== 'white') {
+
+          pixelElementArray[i].style.backgroundColor = 'white';
+
         }
       }
     });
@@ -122,10 +171,50 @@ function pixelPainter(width, height) {
       fill = true;
     });
 
+    let save = document.createElement('button');
+    save.innerText = 'SAVE';
+    save.addEventListener('click', function () {
+
+      for (let i = 0; i < pixelElementArray.length; i++) {
+
+        savedArray[i] = pixelElementArray[i].style.backgroundColor;
+
+      }
+      saveState.setItem('saveState', JSON.stringify(savedArray));
+    });
+
+    let load = document.createElement('button');
+    load.innerText = 'LOAD';
+    load.addEventListener('click', function () {
+
+      if ((!(savedArray===[])) && !saveState.getItem('saveState')) {
+
+        alert('Unable to Load: No save found.');
+
+      } else if ((!(savedArray===[])) && saveState.getItem('saveState')) {
+        savedArray = JSON.parse(saveState.getItem('saveState'));
+
+      }
+
+      for (let i = 0; i < pixelElementArray.length; i++) {
+
+        if (savedArray) {
+
+          pixelElementArray[i].style.backgroundColor = savedArray[i];
+
+        }
+
+      }
+
+
+    });
+
     paletteContainer.append(currentColor);
     paletteContainer.append(fillBut);
     paletteContainer.append(erase);
     paletteContainer.append(clear);
+    paletteContainer.append(save);
+    paletteContainer.append(load);
   }
 
   function setColors() {
@@ -176,10 +265,22 @@ function pixelPainter(width, height) {
 
   function eventHandlers() {
 
-    document.addEventListener('mousedown', e => {
+    // document.addEventListener('mousedown', e => {
 
-      if (e.type === 'mousedown') {
-        mousedown = true;
+    //   if (e.type === 'mousedown') {
+    //     mousedown = true;
+
+    //     if (e.target.className === 'pixels' && !fill) {
+    //       setColor(e);
+    //     }
+
+    //   }
+    // }, false);
+
+    document.addEventListener('pointerdown', e => {
+
+      if (e.type === 'pointerdown') {
+        pointerdown = true;
 
         if (e.target.className === 'pixels' && !fill) {
           setColor(e);
@@ -188,15 +289,15 @@ function pixelPainter(width, height) {
       }
     }, false);
 
-    document.addEventListener('mouseup', e => {
-      if (e.type === 'mouseup') {
-        mousedown = false;
+    document.addEventListener('pointerup', e => {
+      if (e.type === 'pointerup') {
+        pointerdown = false;
       }
     }, false);
   }
 
   function eventColor(event) {
-    if (!fill && mousedown) {
+    if (!fill && pointerdown) {
       setColor(event);
     }
   }
@@ -239,9 +340,9 @@ function pixelPainter(width, height) {
     let edgeCaseStart = -1;
     let edgeCaseEnd = 2;
 
-    if (currentPosition%width === 0){
+    if (currentPosition % width === 0) {
       edgeCaseStart++;
-    } else if(currentPosition%width === width-1) {
+    } else if (currentPosition % width === width - 1) {
       edgeCaseEnd--;
     }
 
@@ -254,7 +355,7 @@ function pixelPainter(width, height) {
         if ((i > -1)
           && (i < tableArray.length)
           && (targetBackgroundColor === tableArray[i].style.backgroundColor)) {
-            
+
           tableArray[i].style.backgroundColor = color;
           findCells(targetBackgroundColor, i, tableArray);
 
@@ -277,11 +378,12 @@ function pixelPainter(width, height) {
     return 'rgb(' + (255 - colors[0]) + ',' + (255 - colors[1]) + ',' + (255 - colors[2]) + ')';
   }
 
-  function colorShades(){
-    let hue =  parseInt(Math.random()*360);
-    const saturation = parseInt(Math.random()*40)+60;
-    let light = parseInt(Math.random()*50)+25;
-    return 'hsl(' + hue+','+saturation+'%,'+light+'%)';
+  function colorShades() {
+    let numberSign = Math.round(Math.random() * -1);
+    let hue = parseInt(Math.random() * 360);
+    const saturation = parseInt(numberSign * Math.random() * 25) + 75;
+    let light = parseInt(numberSign * Math.random() * 20) + 55;
+    return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
   }
 
   // function colorShades(color) {
@@ -315,4 +417,4 @@ function pixelPainter(width, height) {
   // }
 }
 
-pixelPainter(25, 20);
+pixelPainter(30, 30);

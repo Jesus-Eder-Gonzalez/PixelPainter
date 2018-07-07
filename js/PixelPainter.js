@@ -107,7 +107,7 @@ function pixelPainter(width, height) {
         }
 
         if (background) {
-          temp.style.backgroundColor = background(i+j);
+          temp.style.backgroundColor = background(i + j);
         } else {
           temp.style.backgroundColor = 'white';
         }
@@ -180,11 +180,11 @@ function pixelPainter(width, height) {
     load.innerText = 'LOAD';
     load.addEventListener('click', function () {
 
-      if ((!(savedArray===[])) && !saveState.getItem('saveState')) {
+      if ((!(savedArray === [])) && !saveState.getItem('saveState')) {
 
         alert('Unable to Load: No save found.');
 
-      } else if ((!(savedArray===[])) && saveState.getItem('saveState')) {
+      } else if ((!(savedArray === [])) && saveState.getItem('saveState')) {
         savedArray = JSON.parse(saveState.getItem('saveState'));
 
       }
@@ -216,15 +216,15 @@ function pixelPainter(width, height) {
     let green = parseInt(Math.random() * 255);
     let blue = parseInt(Math.random() * 255);
     // const color = red.toString(16) + green.toString(16) + blue.toString(16);
-    return [red,green,blue];
+    return [red, green, blue];
   }
-  
-  function colorShades(color){
+
+  function colorShades(color) {
     let colorShade;
-    let hue =  parseInt(Math.random()*360);
-    const saturation = parseInt(Math.random()*40)+60;
-    let light = parseInt(Math.random()*50)+25;
-    return 'hsl(' + hue+','+saturation+'%,'+light+'%)';
+    let hue = parseInt(Math.random() * 360);
+    const saturation = parseInt(Math.random() * 40) + 60;
+    let light = parseInt(Math.random() * 50) + 25;
+    return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
   }
   // function colorShades(color) {
   //   // console.log(color);
@@ -379,6 +379,9 @@ function pixelPainter(width, height) {
     return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
   }
 
+  document.addEventListener('touchstart', function (event) {
+    event.preventDefault();
+  }, { passive: false });
   // function colorShades(color) {
   //   // console.log(color);
   //   let colorShade;

@@ -45,9 +45,6 @@ function pixelPainter(width, height) {
   eventHandlers();
 
   //create and attach the palette
-<<<<<<< HEAD
-  makeTable(palette, 20, 12, 15, getColor, undefined, colorShades);
-=======
   makeTable(palette, 20, 6, 15, getColor, undefined, colorShades);
 
   let colorsArray = palette.getElementsByTagName('td');
@@ -65,7 +62,6 @@ function pixelPainter(width, height) {
     colorsArray[i].style.backgroundColor = tempArray[i];
   }
 
->>>>>>> touch
   paletteContainer.append(palette);
 
   //calls the function that makes all the buttons in pixel painter
@@ -78,10 +74,7 @@ function pixelPainter(width, height) {
   canvasContainer.append(pixelCanvas);
   pixelPaint.append(canvasContainer);
 
-<<<<<<< HEAD
-=======
   pixelElementArray = pixelCanvas.getElementsByTagName('td');
->>>>>>> touch
 
   //function methods to create the tables, modify the background color, and event handlers
   function makeTable(tableToAppend, rows, cols, size, onclick, onhover, background, tdClass) {

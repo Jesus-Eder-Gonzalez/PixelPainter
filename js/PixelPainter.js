@@ -103,7 +103,7 @@ function pixelPainter(width, height) {
         }
 
         if (onhover) {
-          temp.addEventListener('pointerover', onhover);
+          temp.addEventListener('pointerenter', onhover);
         }
 
         if (background) {

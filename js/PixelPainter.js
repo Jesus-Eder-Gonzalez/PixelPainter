@@ -27,6 +27,7 @@ function pixelPainter(width, height) {
   let size = parseInt((clientRatio / (row * 1.5)));
 
   let pointerdown = false;
+  let touching = false;
   let fill = false;
   let savedArray = new Array();
   let pixelElementArray;
@@ -103,7 +104,9 @@ function pixelPainter(width, height) {
         }
 
         if (onhover) {
-          temp.addEventListener('pointerover', onhover);
+          temp.addEventListener('pointermove', onhover);
+
+
         }
 
         if (background) {
@@ -180,11 +183,11 @@ function pixelPainter(width, height) {
     load.innerText = 'LOAD';
     load.addEventListener('click', function () {
 
-      if ((!(savedArray===[])) && !saveState.getItem('saveState')) {
+      if ((!(savedArray === [])) && !saveState.getItem('saveState')) {
 
         alert('Unable to Load: No save found.');
 
-      } else if ((!(savedArray===[])) && saveState.getItem('saveState')) {
+      } else if ((!(savedArray === [])) && saveState.getItem('saveState')) {
         savedArray = JSON.parse(saveState.getItem('saveState'));
 
       }
@@ -236,6 +239,16 @@ function pixelPainter(width, height) {
 
     document.addEventListener('pointerdown', e => {
 
+      document.addEventListener('touchstart', function () {
+        touching = true;
+      }), { passive: true };
+
+      document.addEventListener('touchmove', eventColor), { passive: true };
+
+      document.addEventListener('touchend', function () {
+        touching = false;
+      }), { passive: true };
+
       if (e.type === 'pointerdown') {
         pointerdown = true;
 
@@ -254,8 +267,18 @@ function pixelPainter(width, height) {
   }
 
   function eventColor(event) {
-    if (!fill && pointerdown) {
-      setColor(event);
+
+
+    if (!fill && (pointerdown || touching)) {
+      if (touching && event.touches){
+        // // console.log(event.touches[0]);
+        const element = document.elementFromPoint(event.touches[0].pageX, event.touches[0].pageY);
+        // console.log(element);
+        setColor(element);
+      } else {
+        setColor(event);
+
+      }
     }
   }
 
@@ -270,6 +293,8 @@ function pixelPainter(width, height) {
 
       element.target.style.backgroundColor = color;
 
+    } else if (touching && element.className === 'pixels'){
+      element.style.backgroundColor = color;
     }
 
 

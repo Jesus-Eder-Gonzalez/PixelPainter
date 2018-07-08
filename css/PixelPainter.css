@@ -1,6 +1,7 @@
 #pixelPainter {
     height: fit-content;
     justify-content: center;
+    -ms-touch-action: none;
     /* align-items: center; */
 
 }

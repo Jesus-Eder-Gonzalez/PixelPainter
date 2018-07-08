@@ -27,6 +27,7 @@ function pixelPainter(width, height) {
   let size = parseInt((clientRatio / (row * 1.5)));
 
   let pointerdown = false;
+  let touching = false;
   let fill = false;
   let touching = false;
   let savedArray = new Array();
@@ -104,15 +105,9 @@ function pixelPainter(width, height) {
         }
 
         if (onhover) {
-          temp.addEventListener('pointerover', onhover);
-          temp.addEventListener('touchstart', function () {
-            touching = true;
-            
-          }); 
-          document.addEventListener('touchmove', onhover);
-          temp.addEventListener('touchend', function () {
-            touching = false;
-          });
+          temp.addEventListener('pointermove', onhover);
+
+
         }
 
           if (background) {
@@ -190,12 +185,12 @@ function pixelPainter(width, height) {
       load.innerText = 'LOAD';
       load.addEventListener('click', function () {
 
-        if ((!(savedArray === [])) && !saveState.getItem('saveState')) {
+      if ((!(savedArray === [])) && !saveState.getItem('saveState')) {
 
           alert('Unable to Load: No save found.');
 
-        } else if ((!(savedArray === [])) && saveState.getItem('saveState')) {
-          savedArray = JSON.parse(saveState.getItem('saveState'));
+      } else if ((!(savedArray === [])) && saveState.getItem('saveState')) {
+        savedArray = JSON.parse(saveState.getItem('saveState'));
 
         }
 
@@ -282,42 +277,41 @@ function pixelPainter(width, height) {
 
 
 
-      document.addEventListener('pointerdown', e => {
+      document.addEventListener('touchstart', function () {
+        touching = true;
+      }), { passive: true };
 
-        if (e.type === 'pointerdown') {
-          pointerdown = true;
+      document.addEventListener('touchmove', eventColor), { passive: true };
 
-          if (e.target.className === 'pixels' && !fill) {
-            setColor(e);
-          }
+      document.addEventListener('touchend', function () {
+        touching = false;
+      }), { passive: true };
 
-        }
-      }, false);
 
       document.addEventListener('pointerup', e => {
         if (e.type === 'pointerup') {
           pointerdown = false;
         }
       }, false);
+
     }
-
-    function eventColor(event) {
-
-      if (!fill && (pointerdown || touching)) {
-
-        if(touching) {
-          console.log(event.target);
-          setColor(event.target);
-        } else {
-          setColor(event);
-        }
+  function eventColor(event) {
 
 
+    if (!fill && (pointerdown || touching)) {
+      if (touching && event.touches){
+        // // console.log(event.touches[0]);
+        const element = document.elementFromPoint(event.touches[0].pageX, event.touches[0].pageY);
+        // console.log(element);
+        setColor(element);
+      } else {
+        setColor(event);
 
       }
     }
+  }
 
-    function setColor(element) {
+     function setColor(element) {
 
       if (fill) {
 

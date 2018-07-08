@@ -29,7 +29,6 @@ function pixelPainter(width, height) {
   let pointerdown = false;
   let touching = false;
   let fill = false;
-  let touching = false;
   let savedArray = new Array();
   let pixelElementArray;
 

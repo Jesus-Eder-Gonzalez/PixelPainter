@@ -26,7 +26,7 @@ function pixelPainter(width, height) {
 
   console.log(document.documentElement.clientHeight + ' ' + document.documentElement.clientWidth);
 
-  let size = parseInt((clientRatio / (row * 1.25)));
+  let size = parseInt((clientRatio / (row * 1.4)));
 
   let pointerdown = false;
   let touching = false;

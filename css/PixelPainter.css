@@ -1,4 +1,6 @@
 #pixelPainter {
+    display: flex;
+    flex-flow: row nowrap;
     height: fit-content;
     justify-content: center;
     touch-action: none;
@@ -41,8 +43,8 @@ div {
     align-items: center;
     height: auto;
     margin-top:2px;
-    margin-bottom: 2px;
-    margin-left: 25px;
+    /* margin-bottom: 1px; */
+    /* margin-left: 5px; */
     width: 175px;
 }
 
@@ -53,6 +55,19 @@ table {
     border-collapse: collapse;
 }
 
+/* 
+@media screen {
 
+body {
+    height: 200px;
+}
 
+#pixelPainter {
+    margin-top: 60px;
+}
 
+h1 {
+    visibility: hidden;
+}
+
+} */

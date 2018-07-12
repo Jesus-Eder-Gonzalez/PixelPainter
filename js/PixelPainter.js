@@ -1,6 +1,8 @@
 function pixelPainter(width, height) {
   //function variables
   let color = colorShades();
+  //save color to switch from HSL to RGB
+  color = color;
   // let size = 40;
 
   let row = height;
@@ -24,7 +26,7 @@ function pixelPainter(width, height) {
 
   console.log(document.documentElement.clientHeight + ' ' + document.documentElement.clientWidth);
 
-  let size = parseInt((clientRatio / (row * 1.5)));
+  let size = parseInt((clientRatio / (row * 1.25)));
 
   let pointerdown = false;
   let touching = false;
@@ -46,7 +48,7 @@ function pixelPainter(width, height) {
   eventHandlers();
 
   //create and attach the palette
-  makeTable(palette, 20, 6, 15, getColor, undefined, colorShades);
+  makeTable(palette, 15, 6, 15, getColor, undefined, colorShades);
 
   let colorsArray = palette.getElementsByTagName('td');
   let tempArray = [];
@@ -110,7 +112,7 @@ function pixelPainter(width, height) {
         }
 
         if (background) {
-          temp.style.backgroundColor = background();
+          temp.style.backgroundColor = background(j);
         } else {
           temp.style.backgroundColor = 'white';
         }
@@ -165,6 +167,7 @@ function pixelPainter(width, height) {
     fillBut.innerText = 'FILL';
     fillBut.addEventListener('click', function () {
       fill = true;
+      currentColor.style.border = currentColor.style.border.substring(0, 12) + color;
     });
 
     let save = document.createElement('button');
@@ -214,12 +217,16 @@ function pixelPainter(width, height) {
   }
 
   function setColors() {
+    let randomSeedRed = parseInt(Math.random() * 205);
+    let randomSeedGreen = parseInt(Math.random() * 205);
+    let randomSeedBlue = parseInt(Math.random() * 205);
 
-    let red = parseInt(Math.random() * 255);
-    let green = parseInt(Math.random() * 255);
-    let blue = parseInt(Math.random() * 255);
+    let red = (parseInt(Math.random() * 255)) + (-1 * (parseInt(Math.random() * randomSeedRed)));
+    let green = (parseInt(Math.random() * 255)) + (-1 * (parseInt(Math.random() * randomSeedGreen)));
+    let blue = (parseInt(Math.random() * 255)) + (-1 * (parseInt(Math.random() * randomSeedBlue)));
 
-    return 'rgb(' + red + ',' + green + ',' + blue + ')';
+    // return 'rgb(' + red + ',' + green + ',' + blue + ')';
+    return [red, green, blue];
 
   }
 
@@ -270,7 +277,7 @@ function pixelPainter(width, height) {
 
 
     if (!fill && (pointerdown || touching)) {
-      if (touching && event.touches){
+      if (touching && event.touches) {
         // // console.log(event.touches[0]);
         const element = document.elementFromPoint(event.touches[0].pageX, event.touches[0].pageY);
         // console.log(element);
@@ -288,12 +295,13 @@ function pixelPainter(width, height) {
 
       fillPixels(element);
       fill = false;
+      currentColor.style.border = currentColor.style.border.substring(0, 12) + 'white';
 
     } else if (element.target) {
 
       element.target.style.backgroundColor = color;
 
-    } else if (touching && element.className === 'pixels'){
+    } else if (touching && element.className === 'pixels') {
       element.style.backgroundColor = color;
     }
 
@@ -308,7 +316,16 @@ function pixelPainter(width, height) {
 
     for (let i = 0; i < fillCells.length; i++) {
       if (element.target === fillCells[i]) {
-        findCells(targetColor, i, fillCells);
+        // console.log(targetColor + ' ' + color + ' ' + ' ' +fillCells[i].style.backgroundColor);
+        if (!(color === fillCells[i].style.backgroundColor)) {
+          findCells(targetColor, i, fillCells);
+        } else {
+
+          fill = false;
+          currentColor.style.border = currentColor.style.border.substring(0, 12) + 'white';
+
+        }
+
       }
     }
 
@@ -353,6 +370,10 @@ function pixelPainter(width, height) {
     colorDiv.style.background = color;
     colorDiv.style.color = oppositeColor(color);
 
+    if (fill) {
+      currentColor = currentColor.style.border = currentColor.style.border.substring(0, 12) + color;
+    }
+
   }
 
   function oppositeColor(colorToChange) {
@@ -360,43 +381,43 @@ function pixelPainter(width, height) {
     return 'rgb(' + (255 - colors[0]) + ',' + (255 - colors[1]) + ',' + (255 - colors[2]) + ')';
   }
 
-  function colorShades() {
-    let numberSign = Math.round(Math.random() * -1);
-    let hue = parseInt(Math.random() * 360);
-    const saturation = parseInt(numberSign * Math.random() * 25) + 75;
-    let light = parseInt(numberSign * Math.random() * 20) + 55;
-    return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
-  }
-
-  // function colorShades(color) {
-  //   // console.log(color);
-  //   let colorShade;
-  //   // let gradient = parseInt((150/height))*step;
-  //   // console.log(gradient);
-  //   switch (color) {
-  //     case 0:
-  //     colorShade = 'transparent';
-  //     break;
-  //     case 1:
-  //     colorShade = [255,0,0];
-  //     break;
-  //     case 2:
-  //     colorShade = [255,128,0];
-  //     break;
-  //     case 3:
-  //     colorShade = [255,255,0];
-  //     break;
-  //     case 4:
-  //     colorShade = [128,255,0];
-  //     break;
-  //     default:
-  //     colorShade = setColors();
-  //     console.log(colorShade);
-  //     break;
-  //   }
-
-  //   return 'rgb(' + colorShade[0] + ',' + colorShade[1] + ',' + colorShade[2] + ')';
+  // function colorShades() {
+  //   let numberSign = Math.round(Math.random() * -1);
+  //   let hue = parseInt(Math.random() * 360);
+  //   const saturation = parseInt(numberSign * Math.random() * 25) + 75;
+  //   let light = parseInt(numberSign * Math.random() * 20) + 55;
+  //   return 'hsl(' + hue + ',' + saturation + '%,' + light + '%)';
   // }
+
+  function colorShades(color) {
+    // console.log(color);
+    let colorShade;
+    // let gradient = parseInt((150/height))*step;
+    // console.log(gradient);
+    switch (color) {
+      // case 0:
+      // colorShade = 'transparent';
+      // break;
+      // case 1:
+      // colorShade = [255,0,0];
+      // break;
+      // case 2:
+      // colorShade = [255,128,0];
+      // break;
+      // case 3:
+      // colorShade = [255,255,0];
+      // break;
+      // case 4:
+      // colorShade = [128,255,0];
+      // break;
+      default:
+        colorShade = setColors();
+        // console.log(colorShade);
+        break;
+    }
+
+    return 'rgb(' + colorShade[0] + ',' + colorShade[1] + ',' + colorShade[2] + ')';
+  }
 }
 
-pixelPainter(30, 30);
+pixelPainter(50, 40);
